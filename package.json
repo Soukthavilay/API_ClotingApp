@@ -1,0 +1,25 @@
+{
+  "name": "firebase_api_mobile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "firebase": "^9.8.3",
+    "firebase-admin": "^10.3.0"
+  },
+  "devDependencies": {
+    "@babel/helper-compilation-targets": "^7.18.2",
+    "nodemon": "^2.0.16"
+  }
+}
