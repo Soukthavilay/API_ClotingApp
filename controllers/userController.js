@@ -2,12 +2,12 @@
 const firebase = require('../db');
 const User = require('../models/user');
 const fs = require('firebase-admin');
+const bcrypt = require('bcrypt');
 const firestore = fs.firestore();
 
 //add user
 const addUser= async(req, res,next) => {
     try{
-        console.log('hello workd')
         const data = req.body;
         await firestore.collection('users').doc().set(data);
         res.send('Record saved successfuly');
