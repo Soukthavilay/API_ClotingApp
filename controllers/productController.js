@@ -29,10 +29,8 @@ const getAllProduct = async (req, res,next) => {
                     doc.id,
                     doc.data().nameProduct,
                     doc.data().descProduct,
-                    doc.data().priceProduct,
                     doc.data().create_at,
                     doc.data().modified_at,
-                    doc.data().stockProduct,
                     doc.data().categoryId
                 );
                 productArray.push(product);
