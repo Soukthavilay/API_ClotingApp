@@ -10,6 +10,13 @@ const addOrder= async(req, res,next) => {
     try{
         const ordername = req.body.name;
         const data = req.body;
+
+        data.status = 0;
+        data.created_at = new Date(Date.now()).toDateString();
+        await firestore.collection('orders').doc().set(data);
+        console.log(data.name);
+        res.send('Record saved successfuly');
+ 
         data.created_at = new Date(Date.now()).toDateString();
         await firestore.collection('orders').doc().set(data);
         const r = await firestore.collection('orders').where("name","==",ordername).get()
@@ -22,20 +29,21 @@ const addOrder= async(req, res,next) => {
         }
         )   
         return res.status(200).json({order : r});
+
     }catch (error){
         return res.status(404).send(error.message);
     }
 }
 // get all order
-const getAllOrder = async(req, res,next) => {
+const getMyOrder = async(req, res,next) => {
     try {
-        const orders = await firestore.collection('orders');
+        const orders = await firestore.collection('orders').where("userId","==",req.body.userId);
         const data = await orders.get();
         const ordersArray = [];
         if(data.empty){
             res.status(404).send('No have order record found');
         }else{
-            data.forEach(doc =>{
+            data.forEach(async doc =>{
                 const order = new Order(
                     doc.id,
                     doc.data().created_at,
@@ -47,8 +55,11 @@ const getAllOrder = async(req, res,next) => {
                     doc.data().userId,
                     doc.data().mobile
                 );
-          // get orderItem by OrderId
-          //      ordersArray.pust({order : order, orderItem : orderItem })
+                var order_item = await firestore.collection('order_item').where('orderId',"==",order.id).get()
+                order_item = order_item.docs.map((doc)=>({
+                  id : doc.id,
+                  ...doc.data()
+                 }))
                 ordersArray.push(order);
             });
             res.send(ordersArray);
@@ -57,6 +68,7 @@ const getAllOrder = async(req, res,next) => {
         res.status(404).send(error.message);
     }
 }
+
 // get on order
 const getOrder = async (req, res, next) => {
     try {
@@ -77,7 +89,9 @@ const updateOrder = async(req, res,next) => {
     try {
         const id = req.params.id;
         const data = req.body;
+
         const ordername = req.body.name;
+
         data.modified_at = new Date(Date.now()).toDateString();
         const orders = await firestore.collection('orders').doc(id);
         await orders.update(data);
@@ -108,11 +122,16 @@ const deleteOrder = async (req, res,next) =>{
 }
 module.exports ={
     addOrder,
-    getAllOrder,
+    getMyOrder,
     getOrder,
     updateOrder,
     deleteOrder
+
+
+}
+
 }
 
 // get orderItem by OrderId
 // get Order by userId
+

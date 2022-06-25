@@ -10,11 +10,16 @@ const config = require('./config');
 const productRoutes = require('./routes/product-router');
 const OrderRoutes = require('./routes/order-router');
 const UserRoutes = require('./routes/user-routes');
-const app = express();
 
+const featuresRoutes = require('./routes/featureproduct-route');
+const detailProduct = require('./routes/detailproduct-route')
+const orderItem = require('./routes/order_item-route')
+const app = express();
+app.use(express.static(__dirname+ "/public/image"));
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
+
 app.get('/',(req,res)=>{
     res.send('hello woorld')
 })
@@ -23,6 +28,7 @@ app.get('/',(req,res)=>{
 app.use('/api',productRoutes.routes);
 app.use('/api/',OrderRoutes.routes);
 app.use('/api/',UserRoutes.routes);
-
-
+app.use('/api/',featuresRoutes.routes);
+app.use('/api/',detailProduct.routes);
+app.use('/api/',orderItem.routes);
 app.listen(config.port,()=> console.log('App is listening on port : ' + config.port));
