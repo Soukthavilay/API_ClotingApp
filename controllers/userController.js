@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const firestore = fs.firestore();
 const jwt = require('jsonwebtoken')
 //add user
-const addUser= async(req, res,next) => {
+const register= async(req, res,next) => {
     try{
         const username = req.body.username;
         const users = await firestore.collection('users').where("username","==",username).get()
@@ -168,7 +168,7 @@ const verifyToken = (req,res,next)=>{
     return next()
 }
 module.exports = {
-    addUser,
+    register,
     getAllUser,
     getUser,
     updateUser,
