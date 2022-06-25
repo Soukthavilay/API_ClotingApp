@@ -4,40 +4,45 @@ const OrderItem = require('../models/order_item');
 const fs = require('firebase-admin');
 const bcrypt = require('bcrypt');
 const firestore = fs.firestore();
-
 const addOrderItem= async(req, res,next) => {
     try{
- 
+        const detailProductId =  req.body.detailProductId;
+        const quantitySold = req.body.quantity;
 
-        const idproduct =  req.body.productId;
-        const quantity = req.body.quantity;
 
-        const product = await firestore.collection('products').where(firebase.firestore.FieldPath.documentId(), '==', idproduct).get()
-        .then((snapshot)=>{
-            const data = snapshot.docs.map((doc)=>({
-                id : doc.id,
-                ...doc.data()
-            }))
-            return data[0]
-        })
 
-        const product1 = await firestore.collection('products').where("descProduct","==","kakaka").get()
-        .then((snapshot)=>{
-            const data = snapshot.docs.map((doc)=>({
-                id : doc.id,
-                ...doc.data()
-            }))
-            return data[0]
-        })
-
-        return res.status(200).json({product : product});
-
+        const detailProduct = await firestore.collection('detail_products').doc(detailProductId).get()
+        const detailProductdata = detailProduct.data();
+        
         
 
+        const product = await firestore.collection('products').doc(detailProductdata.idProduct).get()
+        const priceProduct = product.data().price
+        const quantityProduct = detailProductdata.quantity
+       
+        if(quantityProduct < quantitySold){
+            res.status(404).send('There are not enough items to sell');
+        }else{
+            const data = req.body;
+
+            data.price = parseFloat(priceProduct) * parseFloat (quantityProduct);
+            console.log("price",data.price);
+
+            await firestore.collection('detail_products').doc().set(data);
+
+
+            const quantityPrd = parseInt(quantityProduct) - parseInt (quantitySold);
+            console.log(quantityPrd);
+
+            await firestore.collection('detail_products').doc(detailProductId).update({quantity:quantityPrd});
+            return res.status(200).json("add success");
+        }
     }catch (error){
         res.status(404).send(error.message);
     }
 }
+
+
 
 
 const getAllOrderItem = async(req, res,next) => {
@@ -80,7 +85,6 @@ const getOrderItem = async (req, res, next) => {
     }
 }
 
-
 const updateOrderItem = async(req, res,next) => {
     try {
         const id = req.params.id;
@@ -92,7 +96,6 @@ const updateOrderItem = async(req, res,next) => {
         res.status(404).send(error.message);
     }
 }
-
 
 const deleteOrderItem = async (req, res,next) =>{
     try {

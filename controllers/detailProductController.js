@@ -9,6 +9,8 @@ const addDetail= async(req, res,next) => {
     try{
         const data = req.body;
         await firestore.collection('detail_products').doc().set(data);
+
+        
         res.send('Record saved successfuly');
     }catch (error){
         res.status(404).send(error.message);
@@ -29,7 +31,7 @@ const getAllDetail = async(req, res,next) => {
                 const detail = new DetailProduct(
                     doc.id,
                     doc.data().idProduct,
-                    doc.data().idSize,
+                    doc.data().size,
                     doc.data().quantity,
                     doc.data().price,
                     doc.data().colorHex,

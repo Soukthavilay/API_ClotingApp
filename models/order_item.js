@@ -1,8 +1,9 @@
 class OrderItem{
-    constructor(id,orderId, productId,quantity,price){
+    constructor(id,orderId, detailProducId,quantity,price){
        this.id=id;
        this.orderId=orderId;
-       this.productId=productId;
+       this.detailProducId=detailProducId;
+
        this.quantity=quantity;
        this.price=price;
     }
