@@ -36,14 +36,13 @@ const getAllProduct = async (req, res,next) => {
         if(data.empty){
             res.status(404).send('No have product record found');
         }else{
-            const allProduct =  data.docs.map((doc) =>({
-                id : doc.id,
-                ...doc.data()
-        }))
-        console.log(allProduct)
-           for(var i = 0 ; i < allProduct.length ; i++){
-                var detail = await firestore.collection('detail_products').where('idProduct',"==",allProduct[i].id).get()
-                var image = await firestore.collection('picture_product').where('idProduct',"==",allProduct[i].id).limit(1).get()
+            for(const product of data.docs){
+                const p = {
+                    id : product.id,
+                    ...product.data()
+                }
+                var detail = await firestore.collection('detail_products').where('idProduct',"==",p.id).get()
+                var image = await firestore.collection('picture_product').where('idProduct',"==",p.id).limit(1).get()
                 image = image.docs.map((doc)=>({
                    url : doc.data().url,
                 //    isFirst : doc.data().isFirst
@@ -57,8 +56,31 @@ const getAllProduct = async (req, res,next) => {
                       }));
                   }
                               
-               productArray.push({product : allProduct[i],size : detail ,images : image})
+               productArray.push({product : p,size : detail ,images : image})
             }
+        //     const allProduct =  data.docs.map((doc) =>({
+        //         id : doc.id,
+        //         ...doc.data()
+        // }))
+        // console.log(allProduct)
+        //    for(var i = 0 ; i < allProduct.length ; i++){
+        //         var detail = await firestore.collection('detail_products').where('idProduct',"==",allProduct[i].id).get()
+        //         var image = await firestore.collection('picture_product').where('idProduct',"==",allProduct[i].id).limit(1).get()
+        //         image = image.docs.map((doc)=>({
+        //            url : doc.data().url,
+        //         //    isFirst : doc.data().isFirst
+        //         }))[0]
+        //           if (detail.empty){
+        //             detail = []
+        //           }else{
+        //             detail = detail.docs.map((doc)=> ({
+        //                size : doc.data().size,
+        //                quantity : doc.data().quantity,
+        //               }));
+        //           }
+                              
+        //        productArray.push({product : allProduct[i],size : detail ,images : image})
+        //     }
 
             res.status(200).json({data:productArray});
         }
@@ -70,7 +92,7 @@ const getAllProduct = async (req, res,next) => {
 const getProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const product = await firestore.collection('products').doc(id);
+        const product =  firestore.collection('products').doc(id);
         const data = await product.get();
         if(!data.exists){
             res.status(404).send('Product with the given Id not found');
@@ -87,6 +109,7 @@ const getProduct = async (req, res, next) => {
                  detail = []
                }else{
                  detail = detail.docs.map((doc)=> ({
+                    id : doc.id,
                     size : doc.data().size,
                     quantity : doc.data().quantity,
                    }));

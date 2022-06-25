@@ -19,18 +19,17 @@ const addOrder= async(req, res,next) => {
         })
         data.status = 0;
         data.created_at = new Date(Date.now()).toDateString();
-      
+        data.userId = req.body.userId
         const idOrder = await firestore.collection('orders').add(data).then((docRef) =>{
             return docRef.id
         });
-        console.log('hello world',idOrder)
         order_items.forEach(async item=>{
             item.orderId = idOrder
             await firestore.collection('order_items').add(item)
             await firestore.collection('detail_products').doc(item.detail_product_id).update({quantity :item.realQuantity - item.quantity })
 
          })
-        return res.send('Record saved successfuly');
+        return res.status(200).json({data : data})
     }catch (error){
         return res.status(404).send(error.message);
     }
@@ -38,13 +37,13 @@ const addOrder= async(req, res,next) => {
 // get all order
 const getMyOrder = async(req, res,next) => {
     try {
-        const orders = await firestore.collection('orders').where("userId","==",req.body.userId);
+        const orders =  firestore.collection('orders').where("userId","==",req.body.userId);
         const data = await orders.get();
         const ordersArray = [];
         if(data.empty){
             res.status(404).send('No have order record found');
         }else{
-            data.forEach(async doc =>{
+            for (const doc of data.docs){
                 const order = new Order(
                     doc.id,
                     doc.data().created_at,
@@ -56,13 +55,17 @@ const getMyOrder = async(req, res,next) => {
                     doc.data().userId,
                     doc.data().mobile
                 );
-                var order_item = await firestore.collection('order_item').where('orderId',"==",order.id).get()
+                var order_item = await firestore.collection('order_items').where('orderId',"==",order.id).get()
                 order_item = order_item.docs.map((doc)=>({
                   id : doc.id,
                   ...doc.data()
                  }))
-                ordersArray.push(order);
-            });
+                ordersArray.push({order :order, order_items :order_item });
+            }
+
+            // data.forEach(doc =>{
+             
+            // });
             res.send(ordersArray);
         }
     } catch (error) {
