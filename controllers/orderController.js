@@ -18,15 +18,15 @@ const addOrder= async(req, res,next) => {
     }
 }
 // get all order
-const getAllOrder = async(req, res,next) => {
+const getMyOrder = async(req, res,next) => {
     try {
-        const orders = await firestore.collection('orders');
+        const orders = await firestore.collection('orders').where("userId","==",req.body.userId);
         const data = await orders.get();
         const ordersArray = [];
         if(data.empty){
             res.status(404).send('No have order record found');
         }else{
-            data.forEach(doc =>{
+            data.forEach(async doc =>{
                 const order = new Order(
                     doc.id,
                     doc.data().created_at,
@@ -38,6 +38,11 @@ const getAllOrder = async(req, res,next) => {
                     doc.data().userId,
                     doc.data().mobile
                 );
+                var order_item = await firestore.collection('order_item').where('orderId',"==",order.id).get()
+                order_item = order_item.docs.map((doc)=>({
+                  id : doc.id,
+                  ...doc.data()
+                 }))
                 ordersArray.push(order);
             });
             res.send(ordersArray);
@@ -87,7 +92,7 @@ const deleteOrder = async (req, res,next) =>{
 }
 module.exports ={
     addOrder,
-    getAllOrder,
+    getMyOrder,
     getOrder,
     updateOrder,
     deleteOrder

@@ -1,7 +1,7 @@
 class picture_product{
-    constructor(id,product_id,url,isFirst){
+    constructor(id,idProduct,url,isFirst){
         this.id = id;
-        this.product_id = product_id
+        this.idProduct = idProduct
         this.url = url
         this.isFirst = isFirst
     }

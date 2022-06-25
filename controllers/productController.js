@@ -18,24 +18,36 @@ const addProduct= async(req, res,next) => {
 // add all product
 const getAllProduct = async (req, res,next) => {
     try {
-        const products = await firestore.collection('products');
+        const products = await firestore.collection('products').where('id',"==","2GJq1p8EfrfzhpUuacwX");
         const data = await products.get();
         const productArray = [];
         if(data.empty){
             res.status(404).send('No have product record found');
         }else{
-            data.forEach(doc =>{
-                const product = new Product(
-                    doc.id,
-                    doc.data().nameProduct,
-                    doc.data().descProduct,
-                    doc.data().create_at,
-                    doc.data().modified_at,
-                    doc.data().categoryId
-                );
-                productArray.push(product);
-            });
-            res.send(productArray);
+            const allProduct = await data.docs.map((doc) =>({
+                id : doc.id,
+                ...doc.data()
+        }))
+           for(var i = 0 ; i < allProduct.length ; i++){
+                var detail = await firestore.collection('detail_products').where('idProduct',"==",allProduct[i].id).get()
+                var image = await firestore.collection('picture_product').where('idProduct',"==",allProduct[i].id).get()
+                image = image.docs.map((doc)=>({
+                   url : doc.data().url,
+                   isFirst : doc.data().isFirst
+                }))
+                  if (detail.empty){
+                    detail = []
+                  }else{
+                    detail = detail.docs.map((doc)=> ({
+                       size : doc.data().size,
+                       quantity : doc.data().quantity,
+                      }));
+                  }
+                              
+               productArray.push({product : allProduct[i],size : detail ,images : image})
+            }
+
+            res.status(200).json({data:productArray});
         }
     } catch (error) {
         res.status(404).send(error.message);

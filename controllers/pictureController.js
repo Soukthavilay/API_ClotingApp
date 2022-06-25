@@ -8,13 +8,12 @@ const uploadImageControll = async(req,res)=>{
     if(!req.file) {
         return res.status(400).send("Error: No files found")
     } 
-    const {product_id : product_id, isFirst} = req.body
+    const {idProduct : product_id, isFirst} = req.body
    const dir = "public/image/"+product_id+"/" 
     const newPath = path.resolve(dir,req.file.originalname)
     if (!fss.existsSync(dir)){
         fss.mkdirSync(dir);
     }
-  
     try {
     await sharp(req.file.path)
     .jpeg({ quality: 100 })
@@ -23,7 +22,7 @@ const uploadImageControll = async(req,res)=>{
     )
     fss.unlinkSync(req.file.path)
     const newData = {
-        product_id : product_id,
+        idProduct : product_id,
         url : `${product_id}/${req.file.originalname}`,
         isFirst : isFirst
         

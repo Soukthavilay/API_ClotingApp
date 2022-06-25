@@ -1,5 +1,4 @@
 'use strict'
-const firebase = require('../db');
 const User = require('../models/user');
 const fs = require('firebase-admin');
 const bcrypt = require('bcrypt');
