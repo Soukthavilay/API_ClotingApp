@@ -94,6 +94,7 @@ const getAllUser = async(req, res,next) => {
             res.status(404).send('No have order record found');
         }else{
             data.forEach(doc =>{
+                console.log( doc.data().username)
                 const user = new User(
                     doc.id,
                     doc.data().username,
@@ -101,6 +102,7 @@ const getAllUser = async(req, res,next) => {
                     doc.data().password,
                     doc.data().role
                 );
+                console.log("user" + user.username)
                 userArray.push(user);
             });
             res.send(userArray);
