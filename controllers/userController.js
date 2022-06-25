@@ -13,7 +13,7 @@ const addUser= async(req, res,next) => {
         if(!users.empty) return res.status(404).send('User already pls try again')
         const data = req.body;
         await firestore.collection('users').doc().set(data);
-        res.send('Record saved successfuly');
+        res.send(data.username + " " + " logged in");
     }catch (error){
         res.status(404).send(error.message);
     }
@@ -21,10 +21,9 @@ const addUser= async(req, res,next) => {
 //sigin user
 const signin = async(req, res,next) => {
     try {
-        const password = req.body.password;
         const username = req.body.username;
-        const users = await firestore.collection('users').where("username","==",username,"password","==",password).get();
-        if(!users && !password) return res.status(404).send('username and password incorrect, pls try again')
+        const users = await firestore.collection('users').doc(username);
+        const doc = await users.get();
     } catch (error) {
         res.status(404).send(error.message); 
     }
@@ -44,7 +43,8 @@ const getAllUser = async(req, res,next) => {
                     doc.id,
                     doc.data().username,
                     doc.data().address,
-                    doc.data().password,
+                    doc.data().undefined,
+                    doc.data().mobilePhone,
                     doc.data().role
                 );
                 console.log("user" + user.username)
@@ -65,7 +65,9 @@ const getUser = async (req, res, next) => {
         if(!data.exists){
             res.status(404).send('User with the given Id not found');
         }else{
-            res.send(data.data());
+            res.send(
+                data.data()   
+            );
         }
     } catch (error) {
         res.status(404).send(error.message);

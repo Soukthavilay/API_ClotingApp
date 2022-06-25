@@ -4,7 +4,7 @@ class Order{
         this.created_at = created_at;
         this.modified_at = modified_at;
         this.amount = amount;
-        this.status = status;
+        this.status =status;
         this.name = name;
         this.address = address;
         this.userId = userId;
