@@ -7,7 +7,6 @@ const firestore = fs.firestore();
 //add order
 const addOrder= async(req, res,next) => {
     try{
-        console.log('hello workd')
         const data = req.body;
         await firestore.collection('orders').doc().set(data);
         res.send('Record saved successfuly');
@@ -36,6 +35,8 @@ const getAllOrder = async(req, res,next) => {
                     doc.data().userId,
                     doc.data().mobile
                 );
+          // get orderItem by OrderId
+          //      ordersArray.pust({order : order, orderItem : orderItem })
                 ordersArray.push(order);
             });
             res.send(ordersArray);
@@ -89,3 +90,6 @@ module.exports ={
     deleteOrder
 
 }
+
+// get orderItem by OrderId
+// get Order by userId
