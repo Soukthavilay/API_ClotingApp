@@ -5,6 +5,7 @@ class User{
         this.address = address;
         this.password = password;
         this.role = role;
+        this.mobile = mobile;
     }
 }
 module.exports = User;
