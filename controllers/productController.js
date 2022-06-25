@@ -18,16 +18,19 @@ const addProduct= async(req, res,next) => {
 // add all product
 const getAllProduct = async (req, res,next) => {
     try {
-        const products = await firestore.collection('products').where('id',"==","2GJq1p8EfrfzhpUuacwX");
+        const products =  firestore.collection('products')
+       
         const data = await products.get();
+       
         const productArray = [];
         if(data.empty){
             res.status(404).send('No have product record found');
         }else{
-            const allProduct = await data.docs.map((doc) =>({
+            const allProduct =  data.docs.map((doc) =>({
                 id : doc.id,
                 ...doc.data()
         }))
+        console.log(allProduct)
            for(var i = 0 ; i < allProduct.length ; i++){
                 var detail = await firestore.collection('detail_products').where('idProduct',"==",allProduct[i].id).get()
                 var image = await firestore.collection('picture_product').where('idProduct',"==",allProduct[i].id).get()

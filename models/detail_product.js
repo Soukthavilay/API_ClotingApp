@@ -4,7 +4,6 @@ class DetailProduct{
         this.size=size;
         this.idProduct=idProduct;
         this.quantity=quantity;
-
     }
 }
 module.exports = DetailProduct;

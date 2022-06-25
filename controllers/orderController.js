@@ -7,12 +7,29 @@ const firestore = fs.firestore();
 //add order
 const addOrder= async(req, res,next) => {
     try{
-        const data = req.body;
+        const {mobile,address,name,order_items,amount} = req.body;
+        const data = {mobile,address,name,amount}
+        order_items.forEach(async item=>{
+          
+           const p = await firestore.collection('detail_products').doc(item.detail_product_id).get()
+           const product =   p.data()
+           if(product.quantity < item.quantity) {return res.status(500).json({status : "error",msg : "item is out of stock" , stock : product.quantity})}
+           item.realQuantity = product.quantity
+        })
         data.status = 0;
         data.created_at = new Date(Date.now()).toDateString();
-        await firestore.collection('orders').doc().set(data);
-        console.log(data.name);
-        res.send('Record saved successfuly');
+      
+        const idOrder = await firestore.collection('orders').add(data).then((docRef) =>{
+            return docRef.id
+        });
+        console.log('hello world',idOrder)
+        order_items.forEach(async item=>{
+            item.orderId = idOrder
+            await firestore.collection('order_items').add(item)
+            await firestore.collection('detail_products').doc(item.detail_product_id).update({quantity :item.realQuantity - item.quantity })
+
+         })
+        return res.send('Record saved successfuly');
     }catch (error){
         res.status(404).send(error.message);
     }
