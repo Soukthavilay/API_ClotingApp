@@ -27,13 +27,12 @@ const getAllProduct = async (req, res,next) => {
             data.forEach(doc =>{
                 const product = new Product(
                     doc.id,
-                    doc.data().nameProduct,
-                    doc.data().descProduct,
-                    doc.data().priceProduct,
-                    doc.data().create_at,
-                    doc.data().modified_at,
-                    doc.data().stockProduct,
-                    doc.data().categoryId
+                    doc.data().idProduct,
+                    doc.data().idSize,
+                    doc.data().quantity,
+                    doc.data().price,
+                    doc.data().colorHex,
+                    doc.data().color
                 );
                 productArray.push(product);
             });

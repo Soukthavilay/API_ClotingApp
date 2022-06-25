@@ -7,13 +7,38 @@ const firestore = fs.firestore();
 
 const addOrderItem= async(req, res,next) => {
     try{
-        const data = req.body;
-        await firestore.collection('order_items').doc().set(data);
-        res.send('Record saved successfuly');
+ 
+
+        const idproduct =  req.body.productId;
+        const quantity = req.body.quantity;
+
+        const product = await firestore.collection('products').where(firebase.firestore.FieldPath.documentId(), '==', idproduct).get()
+        .then((snapshot)=>{
+            const data = snapshot.docs.map((doc)=>({
+                id : doc.id,
+                ...doc.data()
+            }))
+            return data[0]
+        })
+
+        const product1 = await firestore.collection('products').where("descProduct","==","kakaka").get()
+        .then((snapshot)=>{
+            const data = snapshot.docs.map((doc)=>({
+                id : doc.id,
+                ...doc.data()
+            }))
+            return data[0]
+        })
+
+        return res.status(200).json({product : product});
+
+        
+
     }catch (error){
         res.status(404).send(error.message);
     }
 }
+
 
 const getAllOrderItem = async(req, res,next) => {
     try {

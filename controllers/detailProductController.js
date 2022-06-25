@@ -15,6 +15,8 @@ const addDetail= async(req, res,next) => {
     }
 }
 
+
+
 const getAllDetail = async(req, res,next) => {
     try {
         const detals = await firestore.collection('detail_products');
@@ -27,10 +29,11 @@ const getAllDetail = async(req, res,next) => {
                 const detail = new DetailProduct(
                     doc.id,
                     doc.data().idProduct,
-                    doc.data().idColor,
                     doc.data().idSize,
                     doc.data().quantity,
                     doc.data().price,
+                    doc.data().colorHex,
+                    doc.data().color,
                 );
                 detailArray.push(detail);
             });
