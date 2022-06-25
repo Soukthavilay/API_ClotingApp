@@ -1,10 +1,11 @@
 class DetailProduct{
-    constructor(id,idProduct, idColor,idSize,quantity,price){
+    constructor(id,idProduct,idSize,quantity,price,colorHex,color){
         this.id=id;
-        this.idProduct=idProduct;
-        this.idColor=idColor;
         this.idSize=idSize;
+        this.idProduct=idProduct;
         this.quantity=quantity;
+        this.colorHex=colorHex;
+        this.color=color;
         this.price=price;
     }
 }
