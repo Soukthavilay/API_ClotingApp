@@ -10,6 +10,38 @@ const addOrderItem= async(req, res,next) => {
         const data = req.body;
         await firestore.collection('order_items').doc().set(data);
         res.send('Record saved successfuly');
+
+
+        const idproduct =  req.body.idProduct;
+        const quantity = req.body.quantity;
+        const products = await firestore.collection('products').where("id","==",idproduct).get()
+        .then((snapshot)=>{
+            const data = snapshot.docs.map((doc)=>({
+                id : doc.id,
+                ...doc.data()
+            }))
+            return data
+        })
+
+        console.log(products);
+        
+        // product = products;
+        // const quantityStock = product.quantity;
+       
+       
+       
+        // const orderItemArray = [];
+        // if(data.empty){
+        //     res.status(404).send('No have productID found');
+        // }else{
+
+        // }
+
+
+
+
+
+
     }catch (error){
         res.status(404).send(error.message);
     }

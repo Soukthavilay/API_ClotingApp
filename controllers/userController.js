@@ -77,6 +77,8 @@ const deleteUser = async (req, res,next) =>{
         res.status(404).send(error.message);
     }
 }
+
+
 module.exports = {
     addUser,
     getAllUser,

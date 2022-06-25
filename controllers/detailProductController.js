@@ -10,6 +10,7 @@ const addDetail= async(req, res,next) => {
         const data = req.body;
         await firestore.collection('detail_products').doc().set(data);
         res.send('Record saved successfuly');
+
     }catch (error){
         res.status(404).send(error.message);
     }
@@ -17,8 +18,8 @@ const addDetail= async(req, res,next) => {
 
 const getAllDetail = async(req, res,next) => {
     try {
-        const detals = await firestore.collection('detail_products');
-        const data = await detals.get();
+        const details = await firestore.collection('detail_products');
+        const data = await details.get();
         const detailArray = [];
         if(data.empty){
             res.status(404).send('No have order record found');
@@ -27,10 +28,11 @@ const getAllDetail = async(req, res,next) => {
                 const detail = new DetailProduct(
                     doc.id,
                     doc.data().idProduct,
-                    doc.data().idColor,
                     doc.data().idSize,
                     doc.data().quantity,
                     doc.data().price,
+                    doc.data().colorHex,
+                    doc.data().color
                 );
                 detailArray.push(detail);
             });
@@ -79,7 +81,6 @@ const deleteDetail = async (req, res,next) =>{
         res.status(404).send(error.message);
     }
 }
-
 
 module.exports = {
     addDetail,
