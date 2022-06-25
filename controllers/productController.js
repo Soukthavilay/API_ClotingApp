@@ -7,10 +7,20 @@ const firestore = fs.firestore();
 //add product 
 const addProduct= async(req, res,next) => {
     try{
-        console.log('hello workd')
+        const product_name = req.body.nameProduct;
         const data = req.body;
+        data.created_at = new Date(Date.now()).toDateString();
         await firestore.collection('products').doc().set(data);
-        res.send('Record saved successfuly');
+        const r = await firestore.collection('products').where("nameProduct","==",product_name).get()
+        .then((querySnapshot) => {
+            const data = querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            return data[0]
+        }
+        )   
+        return res.status(200).json({product : r});
     }catch (error){
         res.status(404).send(error.message);
     }
@@ -61,9 +71,21 @@ const updateProduct = async(req, res,next) => {
     try {
         const id = req.params.id;
         const data = req.body;
+        const product_name = req.body.nameProduct;
+        data.modified_at = new Date(Date.now()).toDateString();
         const product = await firestore.collection('products').doc(id);
         await product.update(data);
-        res.send('Product record update successfuly');
+        await firestore.collection('products').doc().set(data);
+        const r = await firestore.collection('products').where("nameProduct","==",product_name).get()
+        .then((querySnapshot) => {
+            const data = querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            return data[0]
+        }
+        )   
+        return res.status(200).json({product : r});
     } catch (error) {
         res.status(404).send(error.message);
     }

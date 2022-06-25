@@ -10,11 +10,14 @@ const addUser= async(req, res,next) => {
     try{
         const username = req.body.username;
         const users = await firestore.collection('users').where("username","==",username).get()
+        // check username on firebase
         if(!users.empty) return res.status(404).send('User already pls try again')
+
         const data = req.body;
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(req.body.password,salt);
         data.password  = hashedPassword;
+        // get data display to file json
         const user = await firestore.collection('users').doc().set(data);
         const r = await firestore.collection('users').where("username","==",username).get()
         .then((querySnapshot) => {
@@ -55,9 +58,7 @@ const signin = async(req, res) => {
         user.password = undefined
         const token = await jwt.sign({
             user : user,   
-            }, process.env.TOKEN_SECRET)
-
-        
+            }, process.env.TOKEN_SECRET)        
         res.status(200).json(token);
     } catch (error) {
         res.status(404).send(error.message); 
