@@ -9,6 +9,11 @@ body :  username
 + POST /user/login :
 body : username,password 
 res auth 
++ PUT /user :
+header : 'auth-token'
+body :  username
+        address
+        mobile 
 + GET /user :
 header : 'auth-token'
 return user infomation
