@@ -11,14 +11,13 @@ const addOrder= async(req, res,next) => {
         const {mobile,address,name,order_items,amount} = req.body;
         const data = {mobile,address,name,amount}
         order_items.forEach(async item=>{
-          
-           const p = await firestore.collection('detail_products').doc(item.detail_product_id).get()
-           const product =   p.data()
-           if(product.quantity < item.quantity) {return res.status(500).json({status : "error",msg : "item is out of stock" , stock : product.quantity})}
-           item.realQuantity = product.quantity
+        const p = await firestore.collection('detail_products').doc(item.detail_product_id).get()
+        const product =   p.data()
+        if(product.quantity < item.quantity) {return res.status(500).json({status : "error",msg : "item is out of stock" , stock : product.quantity})}
+        item.realQuantity = product.quantity
         })
         data.status = 0;
-        data.created_at = new Date(Date.now()).toDateString();
+        data.created_at = new Date(Date.now()).toUTCString()
         data.userId = req.body.userId
         const idOrder = await firestore.collection('orders').add(data).then((docRef) =>{
             return docRef.id
@@ -61,7 +60,26 @@ const getMyOrder = async(req, res,next) => {
                   id : doc.id,
                   ...doc.data()
                  }))
-                ordersArray.push({order :order, order_items :order_item });
+                const order_items = []
+                
+                for(const r of order_item){
+                  
+                    const p =  firestore.collection('detail_products').doc(r.detail_product_id);
+                    const data = await p.get();
+                   
+                    const dt = data.data();
+                    
+                    var pd =await firestore.collection('products').doc(dt.idProduct).get();
+                    pd = pd.data();
+                    var image = await firestore.collection('picture_product').where('idProduct',"==",dt.idProduct).get()
+                    image = image.docs.map((doc)=>({
+                            url : doc.data().url,
+                            isFirst : doc.data().isFirst
+                         }))  
+                
+                         order_items.push(Object.assign({},r,{nameProduct : pd.nameProduct}, {image : image}))
+                }
+                ordersArray.push({order :order, order_items  });
             }
             console.log("useId",ordersArray)
             // data.forEach(doc =>{
@@ -97,10 +115,10 @@ const updateOrder = async(req, res,next) => {
 
         const ordername = req.body.name;
 
-        data.modified_at = new Date(Date.now()).toDateString();
+        data.modified_at = new Date(Date.now()).toUTCString()
         const orders = await firestore.collection('orders').doc(id);
         await orders.update(data);
-        await firestore.collection('orders').doc().set(data);
+        await firestore.collection('orders').doc().update(data);
         const r = await firestore.collection('orders').where("name","==",ordername).get()
         .then((querySnapshot) => {
             const data = querySnapshot.docs.map((doc) => ({
