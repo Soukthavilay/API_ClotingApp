@@ -25,6 +25,23 @@ const addProduct= async(req, res,next) => {
         res.status(404).send(error.message);
     }
 }
+const getProductByDetail = async (req, res,next) =>{
+    try {
+        const id = req.params.id;
+        const product =  firestore.collection('products').doc(id);
+        const data = await product.get();
+        if(!data.exists){
+            res.status(404).send('Product with the given Id not found');
+        }else{
+            const p = data.data();
+           
+             
+           return res.status(200).json({product : p})
+        }
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+}
 // add all product
 const getAllProduct = async (req, res,next) => {
     try {
@@ -160,5 +177,6 @@ module.exports = {
     getAllProduct,
     getProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getProductByDetail
 }

@@ -38,10 +38,11 @@ const addOrder= async(req, res,next) => {
 const getMyOrder = async(req, res,next) => {
     try {
         const orders =  firestore.collection('orders').where("userId","==",req.body.userId);
+     
         const data = await orders.get();
         const ordersArray = [];
         if(data.empty){
-            res.status(404).send('No have order record found');
+            res.status(500).send('No have order record found');
         }else{
             for (const doc of data.docs){
                 const order = new Order(
@@ -62,11 +63,11 @@ const getMyOrder = async(req, res,next) => {
                  }))
                 ordersArray.push({order :order, order_items :order_item });
             }
-
+            console.log("useId",ordersArray)
             // data.forEach(doc =>{
              
             // });
-            res.send(ordersArray);
+           return res.status(200).json({status : "success",data : ordersArray})
         }
     } catch (error) {
         res.status(404).send(error.message);
