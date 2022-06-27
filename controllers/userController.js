@@ -49,18 +49,18 @@ const signin = async(req, res) => {
           else return []
         }
         )
-        console.log("users",user)
+        console.log("users",req.body)
        
         if(!(await bcrypt.compare(req.body.password,user.password))) return res.status(401).json({
             msg : "username or password is not valid"
         })
         user.password = undefined
-        const token = await jwt.sign({
+        const token =  jwt.sign({
             user : user,   
             }, process.env.TOKEN_SECRET)        
         res.status(200).json(token);
     } catch (error) {
-        res.status(404).send(error.message); 
+        res.status(500).send(error.message); 
     }
 }
 
@@ -129,11 +129,11 @@ const getUser = async (req, res, next) => {
 // update user
 const updateUser = async(req, res,next) => {
     try {
-        const id = req.params.id;
-        const data = req.body;
-        const users = await firestore.collection('users').doc(id);
-        await users.update(data);
-        res.send('Order record update successfuly');
+        const userId = req.body.userId
+        const {username,mobile,address} = req.body;
+        const users =  firestore.collection('users').doc(userId);
+        await users.update({username:username,mobile : mobile,address : address});
+        return res.status(200).json({status : 200,user : {username,mobile,address}})
     } catch (error) {
         res.status(404).send(error.message);
     }

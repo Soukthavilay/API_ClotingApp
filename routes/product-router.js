@@ -4,7 +4,7 @@ const {
    getAllProduct,
    getProduct,
    updateProduct,
-   deleteProduct
+   deleteProduct,getProductByDetail
        
 } = require('../controllers/productController');
 const uploadImage = require("../middlewares/uploadImage")
@@ -17,6 +17,7 @@ const upload = multer({
 })
 router.post('/product/image',uploadImage.single('file'),uploadImageControll)
 router.post('/product',addProduct);
+router.get('/productDetail/:id',getProductByDetail)
 router.get('/product',getAllProduct);
 router.get('/product/:id',getProduct);
 router.put('/product/:id',updateProduct);

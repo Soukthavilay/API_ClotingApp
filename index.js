@@ -14,6 +14,7 @@ const UserRoutes = require('./routes/user-routes');
 const featuresRoutes = require('./routes/featureproduct-route');
 const detailProduct = require('./routes/detailproduct-route')
 const orderItem = require('./routes/order_item-route')
+const categoryRoutes = require('./routes/category-router')
 const app = express();
 app.use(express.static(__dirname+ "/public/image"));
 app.use(express.json());
@@ -25,7 +26,7 @@ app.get('/',(req,res)=>{
 })
 
 
-app.use('/api',productRoutes.routes);
+app.use('/api',productRoutes.routes,categoryRoutes.routes);
 app.use('/api/',OrderRoutes.routes);
 app.use('/api/',UserRoutes.routes);
 app.use('/api/',featuresRoutes.routes);

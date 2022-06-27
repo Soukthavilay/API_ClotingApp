@@ -10,7 +10,7 @@ router.post('/user/register',register);
 router.post('/user/login',signin)
 router.get('/user',verifyToken,getMyInfo);
 router.get('/user/:id',getUser);
-router.put('/user/:id',updateUser);
+router.put('/user',verifyToken,updateUser);
 router.delete('/user/:id',deleteUser);
 
 
