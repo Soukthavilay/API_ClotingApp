@@ -31,17 +31,19 @@ const getAllCategories = async (req, res,next) => {
             data.forEach(doc =>{
                 const category = new Category(
                     doc.id,
-                    doc.data().tittle,
+                    doc.data().title,
                     doc.data().typeId
                 );
                 categorieArray.push(category);
             });
-            res.send(categorieArray);
+           return res.status(200).json({status : 'success' , data : categorieArray});
+          
         }
     } catch (error) {
         res.status(404).send(error.message);
     }
 }
+
 
 
 const getCategory = async (req, res, next) => {
@@ -106,11 +108,11 @@ const getAllType = async (req, res,next) => {
             data.forEach(doc =>{
                 const type = new Type(
                     doc.id,
-                    doc.data().tittle,
+                    doc.data().title,
                 );
                 typeArray.push(type);
             });
-            res.send(typeArray);
+            return res.status(200).json({status : 'success' , data : typeArray});
         }
     } catch (error) {
         res.status(404).send(error.message);

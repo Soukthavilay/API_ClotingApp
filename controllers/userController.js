@@ -129,9 +129,9 @@ const getUser = async (req, res, next) => {
 // update user
 const updateUser = async(req, res,next) => {
     try {
-        const id = req.params.id;
+        const userId = req.body.userId
         const data = req.body;
-        const users = await firestore.collection('users').doc(id);
+        const users =  firestore.collection('users').doc(userId);
         await users.update(data);
         res.send('Order record update successfuly');
     } catch (error) {

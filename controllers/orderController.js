@@ -31,7 +31,7 @@ const addOrder= async(req, res,next) => {
          })
         return res.status(200).json({data : data})
     }catch (error){
-        return res.status(404).send(error.message);
+        return res.status(404).send({status : 'error',msg : error.message});
     }
 }
 // get all order
