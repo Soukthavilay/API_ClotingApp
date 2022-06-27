@@ -28,15 +28,21 @@ const addProduct= async(req, res,next) => {
 const getProductByDetail = async (req, res,next) =>{
     try {
         const id = req.params.id;
-        const product =  firestore.collection('products').doc(id);
+        const product =  firestore.collection('detail_products').doc(id);
         const data = await product.get();
         if(!data.exists){
             res.status(404).send('Product with the given Id not found');
         }else{
-            const p = data.data();
-           
+            var p = data.data();
+            var pd =await firestore.collection('products').doc(p.idProduct).get();
+            pd = pd.data();
+            var image = await firestore.collection('picture_product').where('idProduct',"==",p.idProduct).get()
+            image = image.docs.map((doc)=>({
+                url : doc.data().url,
+                isFirst : doc.data().isFirst
+             }))
              
-           return res.status(200).json({product : p})
+           return res.status(200).json({data :{product : pd,images : image}})
         }
     } catch (error) {
         res.status(404).send(error.message);
